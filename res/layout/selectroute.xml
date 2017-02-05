@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.69"
+        android:orientation="vertical" >
+         
+        <!--  comment the load all button 07/16/2014
+        //2014-12-13 uncomment the following lines
+        -->
+        <Button
+            android:id="@+id/loadallroute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="loadAllRoute"
+            android:text="@string/LoadAllRoute" />
+        
+        <Button
+            android:id="@+id/closealltickets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="CloseAllTickets"
+            android:text="@string/CloseAllTickets" />
+        <Spinner
+            android:id="@+id/routes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/gotorouteresult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="gotoRouteResult"
+            android:text="@string/GetRouteResult" />
+        
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+	    <TableLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:id="@+id/tableLayout2" >
+	
+	       
+	    </TableLayout>
+	    
+		</ScrollView>
+
+    </LinearLayout>
+    
+    
+
+</LinearLayout>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bulk Mobile</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Load Image to DPW.200 Web Server</string>
+    <string name="Take_Images">Take Photos</string>
+    <string name="Closeout">Close out Service Request</string>
+    <string name="ReturnToResultDetail">Return to Result Detail</string>
+    <string name="GetRouteResult">Get Route Results</string>
+    <string name="LoadAllRoute">Load All Routes</string>
+    <string name="GotoCloseout">Go to Close Out</string>
+    <string name="ReturnToRouteResult">Return to Route Result</string>
+     <string name="album_name">CameraSample</string>
+     <string name="Close_Ticket">Close Ticket</string>
+     <string name="Take_Pic1">Take Photo1</string>
+     <string name="Take_Pic2">Take Photo2</string>
+     <string name="Take_Pic3">Take Photo3</string>
+     <string name="Take_Pic4">Take Photo4</string>
+     <string name="Take_Pic5">Take Photo5</string>
+     <string name="Take_Pic6">Take Photo6</string>
+     <string name="TakePhoto">Take Photo Page</string>
+     <string name="ReturnToResultSelect">Return to Routes</string>
+     <string name="SaveTicket">Save Ticket</string>
+     <string name="CloseAllTickets">Close Unclosed Tickets</string>
+    <string-array name="collRt_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+    </string-array>
+    <string-array name="collStatus">
+        <item>CLSD</item>
+        <item>OPN</item>
+    </string-array>
+    <string-array name="collNotes">
+         <item>Collected – Close SR</item>
+         <item>Not Found – Close SR</item>
+         <item>On Private Property – Close SR</item>
+         <item>More than 7 Items - Close SR</item>
+         <item>Mattress/Boxspring not Wrapped – Close SR</item>
+		 <item>Apartment Building – Close SR</item>
+		 <item>Blocked Street/Alley</item>
+		 <item>Improper Setout: Engine or Container filled with Gas– Close SR</item>
+		 <item>Improper Setout: Bundles not tied – Close SR</item>
+		 <item>Improper Setout: Dangerous material – jagged glass or metal – Close SR</item> 
+		 <item>Improper Setout: Item longer than 5 feet – Close SR</item>
+		 <item>Improper Setout: Many small items not bagged or tied – Close SR</item>
+
+		 <item>Improper Setout: Pole or item longer than 4 feet – Close SR</item> 
+		 <item>Improper Setout: Refrigerator with door still attached – Close SR</item> 
+		 <item>Improper Setout: Trash bags – Close SR</item>
+		 <item>Improper Setout: Water Heater with Water – Close SR</item>
+		 <item>Item Too Heavy</item>		 
+		 <item>Notify SWEEP Inspector</item>
+		 <item>Private Collection – Close SR</item>
+		 <item>Prohibited Items: Chemicals – Close SR</item>
+		 <item>Prohibited Items: Construction Debris – Close SR</item>
+		 <item>Prohibited Items: Gasoline – Close SR</item>
+		 <item>Prohibited items: Paint (oil or lead based) – Close SR</item> 
+		 <item>Prohibited items: Tires – Close SR</item>	 
+		 <item>Smaller truck needed: Street too narrow</item> 
+		 <item>Smaller truck needed: Alley too narrow</item>
+		 <item>Wrong Address – Close SR</item>
+    </string-array>
+    
+</resources>
