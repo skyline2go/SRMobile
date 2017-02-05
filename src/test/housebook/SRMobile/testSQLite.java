@@ -1,4 +1,4 @@
-package test.example.atest;
+package test.housebook.SRMobile;
 
 import java.util.List;
 
@@ -10,17 +10,17 @@ import com.example.atest.BulkMobileDB;
 import com.example.atest.R;
 import com.example.atest.RouteData;
 
-class testImageEncode {
+/*class testSQLite {
 	public static void main(String[] args)
 	{
 		System.out.println("hello world");
 		
-		//BulkMobileDB db = new BulkMobileDB(getApplicationContext());
+		BulkMobileDB db = new BulkMobileDB(getApplicationContext());
 		
 	}
-}
-/*
-public class testImageEncode {
+}*/
+
+public class testSQLite extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +28,9 @@ public class testImageEncode {
          
         BulkMobileDB db = new BulkMobileDB(this);
          
-        
+        /**
+         * CRUD Operations
+         * */
         // Inserting Contacts
         Log.d("Insert: ", "Inserting .."); 
         db.addRoute(new RouteData("111", "9100000000","2014/1/1"));        
@@ -46,4 +48,4 @@ public class testImageEncode {
         Log.d("Name: ", log);
     }
     }
-}*/
+}

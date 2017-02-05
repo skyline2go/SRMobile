@@ -1,4 +1,4 @@
-package com.example.atest;
+package com.housebook.SRMobile;
 
 import android.media.ExifInterface;
 import android.net.Uri;

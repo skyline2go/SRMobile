@@ -1,4 +1,4 @@
-package com.example.atest;
+package com.housebook.SRMobile;
 
 public class PictureProperty {
 	protected String mfileName;
