@@ -2,7 +2,7 @@ package com.housebook.SRMobile;
 
 import java.io.File;
 
-import com.example.atest.AlbumStorageDirFactory;
+import com.housebook.SRMobile.AlbumStorageDirFactory;
 
 import android.os.Environment;
 

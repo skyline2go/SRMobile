@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.atest"
+    package="com.housebook.SRMobile"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -24,7 +24,7 @@
         android:theme="@style/AppTheme" >
         
         <activity
-            android:name="com.example.atest.MainActivity"
+            android:name="com.housebook.SRMobile.MainActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_name" >
             <intent-filter>
@@ -34,13 +34,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.atest.TakePicsActivity"
+            android:name="com.housebook.SRMobile.TakePicsActivity"
             android:screenOrientation="portrait"
             android:label="@string/TakePhoto" >
         </activity>
 
         <service
-            android:name="com.example.atest.UploadOfflineService"
+            android:name="com.housebook.SRMobile.UploadOfflineService"
             android:enabled="true"
             android:exported="true" >
         </service>

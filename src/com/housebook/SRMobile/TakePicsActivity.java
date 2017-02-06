@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import com.example.atest.AlbumStorageDirFactory;
+import com.housebook.SRMobile.AlbumStorageDirFactory;
 import android.util.Log;
 
 import android.widget.ArrayAdapter;

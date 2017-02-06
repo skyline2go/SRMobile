@@ -57,8 +57,8 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-import com.example.atest.PictureProperty;
-import com.example.atest.SinglePicArrayData;
+import com.housebook.SRMobile.PictureProperty;
+import com.housebook.SRMobile.SinglePicArrayData;
 
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
@@ -81,9 +81,9 @@ public class MainActivity extends Activity {
 	
 	//private int mCurrentPhotoIndex;
 	private ProgressDialog mDialog;
-	//dliu 09-06-2014 comment the following line ??
+	//dl 09-06-2014 comment the following line ??
 	private ProgressDialog mLoadAllRouteDialog;
-	//dliu 12-12-2014 loaded message
+	//dl 12-12-2014 loaded message
 	private ProgressDialog mLoadedMessage;
 	private ProgressDialog mCloseAllRouteDialog;
 	private ProgressDialog mCloseLaterDialog;
@@ -99,9 +99,11 @@ public class MainActivity extends Activity {
 		return getString(R.string.album_name);
 	}*/
 	
-    private String restRouteURL = "http://maps2.dcgis.dc.gov/dcgis/rest/services/DPW/csr_closeout/MapServer/0/query?"; 
-    private String restRouteWherePart1 = "where=Route%3D'";  //+ selRt +  
-    private String restRouteWherePart2 = "'&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=Route%2C+Address%2C+Comments%2C+Sequence%2CSERVNO&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&f=pjson";
+    private String restRouteURL = "http://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_APPS/SR_30days_Open/MapServer/0/query?"; 
+    //private String restRouteWherePart1 = "where=Route%3D'";  //+ selRt +  
+    //private String restRouteWherePart2 = "'&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=Route%2C+Address%2C+Comments%2C+Sequence%2CSERVNO&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&f=pjson";
+    private String restRouteWherePart1 = "where=ORGANIZATIONACRONYM+%3D+%27DPW%27+AND+SERVICEORDERSTATUS%3D+%27OPEN%27";  //+ selRt +  
+    private String restRouteWherePart2 = "&text=&objectIds=6932&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson";
     Spinner spinner;
     int m_SelectPosition;
     String crNumStr;
@@ -115,10 +117,10 @@ public class MainActivity extends Activity {
     private static String SOAP_ACTION1 = "http://Trakster.com/CloseTicket";
     
     private String mResult = null;
-  //dliu 09/19/2014 comment the following function as we don't network signal
+  //dl 09/19/2014 comment the following function as we don't network signal
     //private int mSignalDbm;
     private static HashMap<Integer,String> mResultMap;
-    //dliu 12-14-2014
+    //dl 12-14-2014
     private static HashMap<Integer,Boolean> mLoadStatusMap;
     //This flag is used to know whether the routing information is in Memory or not.
     private static boolean mRoutesInMemory = false;
@@ -129,8 +131,8 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-	    StrictMode.setThreadPolicy(policy);
+		//StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+	    //StrictMode.setThreadPolicy(policy);
 		
 		setContentView(R.layout.selectroute);	
 		//setContentView(R.layout.activity_main);	
@@ -150,7 +152,7 @@ public class MainActivity extends Activity {
 		//create_table();
 		//test_ImageEncode();
 		
-		//dliu 09/19/2014 comment the following function as we don't network signal
+		//dl 09/19/2014 comment the following function as we don't network signal
 		//MyPhoneStateListener myListener   = new MyPhoneStateListener();
 	    //TelephonyManager telManager  = ( TelephonyManager )getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
 	    //telManager.listen(myListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
@@ -177,9 +179,9 @@ public class MainActivity extends Activity {
             }
         }, 2000);*/
 		
-   	    // dliu 10-18-2014 if this is the first time loading, load the routes; Otherwise, skip the following step 
+   	    // dl 10-18-2014 if this is the first time loading, load the routes; Otherwise, skip the following step 
    	    //if (( savedInstanceState == null ) || (mRoutesInMemory == false)) {
-   	 //dliu 02-01-2015 when rotate, don't load the data one more time.. 
+   	 //dl 02-01-2015 when rotate, don't load the data one more time.. 
    	 //1)http://stackoverflow.com/questions/456211/activity-restart-on-rotation-android
    	 //2)I also changed the manifest file:android:configChanges="keyboardHidden|orientation|screenSize" based on the following link:
    	 //http://www.coboltforge.com/2012/08/tech-stuff-prevent-android-app-from-restarting-after-sliding-out-the-hardware-keyboard/
@@ -223,7 +225,7 @@ public class MainActivity extends Activity {
    	    }
 	}
 	
-	// dliu 10-18-2014 Save the load status
+	// dl 10-18-2014 Save the load status
 	@Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
@@ -417,9 +419,9 @@ public class MainActivity extends Activity {
 			 //Based on Yanli suggestion, change the size from 480*320 to 240*160. July 16,2014
 			 //2.2 HQVGA (240x160) ref:http://en.wikipedia.org/wiki/Graphics_display_resolution
 			 //Bitmap lNewbm = lbm.createScaledBitmap(lbm, 480, 320, true);
-			 //dliu 12-14-2014 Based on customer requirement, increase the image size to 640*480.
+			 //dl 12-14-2014 Based on customer requirement, increase the image size to 640*480.
 			 //Bitmap lNewbm = lbm.createScaledBitmap(lbm, 240, 160, true);
-			 //dliu 01-31-2015 Based on cutomer requirement, change the resolution to mid size 480*320.
+			 //dl 01-31-2015 Based on cutomer requirement, change the resolution to mid size 480*320.
 			 Bitmap lNewbm = lbm.createScaledBitmap(lbm, 480, 320, true);
 			 
 			 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -575,11 +577,11 @@ public class MainActivity extends Activity {
 		SinglePicArrayData lSinglePicArray = SinglePicArrayData.getInstance();
 		lSinglePicArray.mPictureProp.clear();
 		//Initialization
-		//dliu 09-13-2014 Do I really need to do this?
+		//dl 09-13-2014 Do I really need to do this?
 		for (int i =0; i <3; i++) {
 			lSinglePicArray.mPictureProp.add(i, null);
 		}
-		//dliu 09/19/2014 comment the following function as we don't network signal
+		//dl 09/19/2014 comment the following function as we don't network signal
 		//EditText dbmEt = (EditText)findViewById(R.id.txtDbm);
 		//dbmEt.setText(Integer.toString(mSignalDbm));
 	}
@@ -668,7 +670,7 @@ public class MainActivity extends Activity {
 			String result;
 			//If the routes data are in memory, query them from memory;
 			//Otherwise, call the REST service to get the data;
-			//dliu 12-14-2014 Add more accurate control over the 
+			//dl 12-14-2014 Add more accurate control over the 
 			if (mRoutesInMemory == true && mLoadStatusMap.get(Integer.parseInt(val.toString())) == true ) {
 				result = queryRESTurlInMemory(Integer.parseInt(val.toString()));
 			}
@@ -694,7 +696,7 @@ public class MainActivity extends Activity {
 				for(int i = 0; i < features.length(); i++){
 			        JSONObject c = features.getJSONObject(i);
 			        JSONObject b = c.getJSONObject("attributes");
-			        dataMap.put(Integer.parseInt(b.getString("Sequence")), b.getString("SERVNO") + '_' + b.getString("Address")+ "_" + b.getString("Comments"));
+			        dataMap.put(Integer.parseInt(b.getString("OBJECTID")), b.getString("SERVICECODEDESCRIPTION") + '_' + b.getString("STREETADDRESS")+ "_" + b.getString("ZIPCODE"));
 				}
 				
 			}catch (JSONException e) {
@@ -716,11 +718,11 @@ public class MainActivity extends Activity {
 	    TableRow rowHeader = new TableRow(this);  
 	    rowHeader.setGravity(Gravity.CENTER);  
 	    TextView numHeaderTxt = new TextView(this);  
-	    numHeaderTxt.setText("#");  
+	    numHeaderTxt.setText("Object#");  
 	    rowHeader.addView(numHeaderTxt);
 	    
 	    TextView srHeaderTxt = new TextView(this);
-	    srHeaderTxt.setText("SR Number");
+	    srHeaderTxt.setText("Code");
 	    rowHeader.addView(srHeaderTxt);
 	    
 	    TextView addHeaderTxt = new TextView(this);
@@ -733,7 +735,7 @@ public class MainActivity extends Activity {
 	    
 	    Set s = DataTreeMap.entrySet();
 	    Iterator it = s.iterator();
-	    //dliu added 05/01/2015
+	    //dl added 05/01/2015
 	    CommentsMap = new HashMap<String, String>();
 	    while ( it.hasNext() ) {
 	    	Map.Entry entry = (Map.Entry) it.next();
@@ -780,7 +782,7 @@ public class MainActivity extends Activity {
 	    	    	crNumStr = tv.getText().toString();
 	    	    	//Save the selected value
 	    	    	m_SelectPosition = spinner.getSelectedItemPosition();
-	    	    	commentStr = CommentsMap.get(crNumStr);
+	    	    	//commentStr = CommentsMap.get(crNumStr);
 	    	    	gotoCloseout(v);
 	    	    }
 	    	});
@@ -791,9 +793,9 @@ public class MainActivity extends Activity {
 	    	
 	    	cellText2 = new TextView(this);
 	    	cellText2.setWidth(150);
-	    	cellText2.setText(datas[1]);
+	    	cellText2.setText(datas[1]+ " ,Washington DC," + datas[2] );
 	    	newRow.addView(cellText2);  
-	    	CommentsMap.put(datas[0], datas[2]);
+	    	//CommentsMap.put(datas[0], datas[2]);
 	    	table.addView(newRow); 
 	    }
 	}
@@ -1111,11 +1113,11 @@ public class MainActivity extends Activity {
 		Spinner lNoteSpinner = (Spinner) findViewById(R.id.spNotes);
 		lSinglePicArray.mNote = lNoteSpinner.getSelectedItem().toString();
 		
-		//dliu Added on Aug 31, 2014
+		//dl Added on Aug 31, 2014
 		// if the notes don't have "Close SR", that means the status should be open.
 		if (lSinglePicArray.mNote.indexOf("Close SR") < 0 )
 		{
-			//dliu changed on apr 28, 2015
+			//dl changed on apr 28, 2015
 			lSinglePicArray.mStatus = "OPN";
 		}
     }
@@ -1169,7 +1171,7 @@ public class MainActivity extends Activity {
 	         
 	     }
 	 }
-	//dliu 09-06-2014 comment the following task.
+	//dl 09-06-2014 comment the following task.
 	private class LoadAllRouteTask extends AsyncTask<Void, Void, Void> {
 	     protected Void doInBackground(Void... args) {
 	         //refresh the view
@@ -1182,11 +1184,11 @@ public class MainActivity extends Activity {
 	    	 mLoadStatusMap = new HashMap<Integer,Boolean>();
 	    	 //Initialization of RouteStatus;
 	    	 //mRouteStatusMap = new HashMap<String,Boolean>();
-		 	 for (int i = 1; i < 17; i++) 
+		 	 for (int i = 1; i < 2; i++) 
 		 	 {
 		 	    	String result;
 		 	    	try {
-		 	    		result = queryRESTurl(restRouteURL + restRouteWherePart1 + i + restRouteWherePart2 );
+		 	    		result = queryRESTurl(restRouteURL + restRouteWherePart1 + restRouteWherePart2 );
 		 	    	} catch (Exception e) {
 		 	    		result = null;
 		 	    		e.printStackTrace();
@@ -1209,7 +1211,7 @@ public class MainActivity extends Activity {
 	     }
 	 }
 	
-	//dliu 09-06-2014 add the following task
+	//dl 09-06-2014 add the following task
 	private class CloseAllRouteTask extends AsyncTask<Void, Void, Void> {
 	     protected Void doInBackground(Void... args) {
 	    	
@@ -1293,13 +1295,13 @@ public class MainActivity extends Activity {
 		//Close the ticket
 		Close_Ticket1(false);
 	/*}
-	//dliu 09-13-2014 Save the data if the network signal is very weak.
+	//dl 09-13-2014 Save the data if the network signal is very weak.
 	else {
 		//Save the data
 		RouteData lRoute = Save_Data();
 	}*/
 	//No network connection store the data
-	//dliu 09-06-2014 comment the following part
+	//dl 09-06-2014 comment the following part
 	/*else {
 		RouteData lRoute = Save_Data();
 		mDialog = ProgressDialog.show(MainActivity.this, "", "Uploading Offline. Will try every 1 minute", true);*/
@@ -1335,7 +1337,7 @@ public class MainActivity extends Activity {
         db.deletePic(lSRNo);
 	}
 	
-	//dliu 09-13-2014 add to test save data
+	//dl 09-13-2014 add to test save data
 	public void Save_Ticket(View v)
     {	
 		//Collect the data
@@ -1689,7 +1691,7 @@ public class MainActivity extends Activity {
 		if (lSinglePicArray.mSRNo == null )
 			return null;
 		
-		//dliu show the dialog for 3 seconds
+		//dl show the dialog for 3 seconds
 		showCloseLaterMessage();
 		
 		RouteData lRoute = new RouteData(lSinglePicArray.mSRNo, lSinglePicArray.mStatus,
@@ -1851,7 +1853,7 @@ public class MainActivity extends Activity {
      lStr = prepareXMLString();
     }
     
-    //dliu 1/31/2015 compare of xml and json https://blog.udemy.com/json-vs-xml/
+    //dl 1/31/2015 compare of xml and json https://blog.udemy.com/json-vs-xml/
     request.addProperty("xmlstring", lStr);
     //request.addProperty("xmlstring", lString);
     //Declare the version of the SOAP request
@@ -1913,7 +1915,7 @@ public class MainActivity extends Activity {
     	
     	e.printStackTrace();
         mResult = e.getMessage();
-        // dliu 09-06-2014 Process the timeout case
+        // dl 09-06-2014 Process the timeout case
         HandleTimeout();
     }
     catch (Exception e) {
@@ -1996,7 +1998,7 @@ public class MainActivity extends Activity {
 //	    }
 //	    //return (info != null && info.isConnected() && Connectivity.isConnectionFast(info.getType(), tm.getNetworkType()));
 //	}
-	//dliu 09/19/2014 comment the following function as we don't network signal
+	//dl 09/19/2014 comment the following function as we don't network signal
 //	private boolean isDataSignalStrong(Context context){
 //		if (isDataConnected(context)) {
 //			
@@ -2206,7 +2208,7 @@ public class MainActivity extends Activity {
     
     }
 	
-	//dliu 09/19/2014 comment the following function as we don't network signal
+	//dl 09/19/2014 comment the following function as we don't network signal
 //	private class MyPhoneStateListener extends PhoneStateListener{
 //	     public int singalStenths =0; 
 //	      @Override

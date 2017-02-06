@@ -6,9 +6,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.example.atest.BulkMobileDB;
-import com.example.atest.R;
-import com.example.atest.RouteData;
+import com.housebook.SRMobile.BulkMobileDB;
+import com.housebook.SRMobile.R;
+import com.housebook.SRMobile.RouteData;
 
 /*class testSQLite {
 	public static void main(String[] args)
