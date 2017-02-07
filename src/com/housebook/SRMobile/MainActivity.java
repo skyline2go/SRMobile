@@ -696,7 +696,7 @@ public class MainActivity extends Activity {
 				for(int i = 0; i < features.length(); i++){
 			        JSONObject c = features.getJSONObject(i);
 			        JSONObject b = c.getJSONObject("attributes");
-			        dataMap.put(Integer.parseInt(b.getString("OBJECTID")), b.getString("SERVICECODEDESCRIPTION") + '_' + b.getString("STREETADDRESS")+ "_" + b.getString("ZIPCODE"));
+			        dataMap.put(Integer.parseInt(b.getString("OBJECTID")), b.getString("SERVICEREQUESTID") + '_' + b.getString("SERVICECODEDESCRIPTION") + '_' + b.getString("STREETADDRESS")+ "_" + b.getString("ZIPCODE"));
 				}
 				
 			}catch (JSONException e) {
@@ -718,11 +718,11 @@ public class MainActivity extends Activity {
 	    TableRow rowHeader = new TableRow(this);  
 	    rowHeader.setGravity(Gravity.CENTER);  
 	    TextView numHeaderTxt = new TextView(this);  
-	    numHeaderTxt.setText("Object#");  
+	    numHeaderTxt.setText("SR_Number");  
 	    rowHeader.addView(numHeaderTxt);
 	    
 	    TextView srHeaderTxt = new TextView(this);
-	    srHeaderTxt.setText("Code");
+	    srHeaderTxt.setText("SR_Type");
 	    rowHeader.addView(srHeaderTxt);
 	    
 	    TextView addHeaderTxt = new TextView(this);
@@ -747,14 +747,14 @@ public class MainActivity extends Activity {
 	    	cellNum = new TextView(this);
 	    	cellNum.setGravity(Gravity.CENTER_HORIZONTAL); 
 	    	//cellNum.setText(String.valueOf(i+1));
-	    	cellNum.setText(String.valueOf(sequence));
-	    	cellNum.setWidth(10);
+	    	cellNum.setText(datas[0]);
+	    	cellNum.setWidth(50);
 	    	newRow.addView(cellNum);
 	    	
 	    	cellText1 = new TextView(this);
 	    	cellText1.setGravity(Gravity.CENTER_HORIZONTAL); 
-	    	cellText1.setText(Html.fromHtml( datas[0] ));
-	    	cellText1.setWidth(100);
+	    	cellText1.setText(Html.fromHtml( datas[1] ));
+	    	cellText1.setWidth(120);
 
 	    	cellText1.setTextColor(Color.BLUE);
 	    	
@@ -793,7 +793,7 @@ public class MainActivity extends Activity {
 	    	
 	    	cellText2 = new TextView(this);
 	    	cellText2.setWidth(150);
-	    	cellText2.setText(datas[1]+ " ,Washington DC," + datas[2] );
+	    	cellText2.setText(datas[2]+ " ,Washington DC," + datas[3] );
 	    	newRow.addView(cellText2);  
 	    	//CommentsMap.put(datas[0], datas[2]);
 	    	table.addView(newRow); 
