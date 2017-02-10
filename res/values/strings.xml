@@ -74,5 +74,46 @@
 		 <item>Smaller truck needed: Alley too narrow</item>
 		 <item>Wrong Address – Close SR</item>
     </string-array>
-    
+    <string-array name="SRTypes">
+	    <item>Abandoned Bicycle</item>
+		<item>Abandoned Vehicle - On Private Property</item>
+		<item>Abandoned Vehicle - On Public Property</item>
+		<item>Alley Cleaning</item>
+		<item>Alley Repair</item>
+		<item>Bicycle Services</item>
+		<item>Bulk Collection</item>
+		<item>Christmas Tree Removal-Seasonal</item>
+		<item>Container Removal</item>
+		<item>Dead Animal Collection</item>
+		<item>Emergency No-Parking Verification</item>
+		<item>Graffiti Removal</item>
+		<item>Grass and Weeds Mowing</item>
+		 <item>Illegal Dumping</item>
+		<item>Illegal Poster</item>
+		<item>Leaf Season Collection</item>
+		<item>Out of State Parking Violation (ROSA)</item>
+		<item>Parking Enforcement</item>
+		<item>Parking Meter Repair</item>
+		<item>Public Space Litter Can- Installation/Removal/Repair</item>
+		<item>Public Space Litter Can-Collection</item>
+		<item>Recycling Cart - Repair</item>
+		<item>Recycling Cart Delivery</item>
+		<item>Recycling Collection - Missed</item>
+		<item>Recycling- Information Request</item>
+		<item>Resident Parking Permit Violation</item>
+		<item>Sanitation Enforcement</item>
+		<item>Sidewalk Shoveling Enforcement Exemtion</item>
+		<item>Signed Street Sweeping Missed</item>
+		<item>Snow Removal Complaints for Sidewalks</item>
+		<item>Snow/Ice Removal</item>
+		<item>Snow/Ice Removal (Roadways AND Bridge walkways ONLY)</item>
+		<item>Street Cleaning</item>
+		<item>Supercan - Delivery</item>
+		<item>Supercan - Repair</item>
+		<item>Trash Cart - Delivery</item>
+		<item>Trash Cart Repair</item>
+		<item>Trash Collection - Missed</item>
+		<item>Vacant Lot</item>
+		<item>Yard Waste - Missed</item>
+	</string-array>
 </resources>

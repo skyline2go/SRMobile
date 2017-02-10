@@ -102,8 +102,8 @@ public class MainActivity extends Activity {
     private String restRouteURL = "http://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_APPS/SR_30days_Open/MapServer/0/query?"; 
     //private String restRouteWherePart1 = "where=Route%3D'";  //+ selRt +  
     //private String restRouteWherePart2 = "'&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=Route%2C+Address%2C+Comments%2C+Sequence%2CSERVNO&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&f=pjson";
-    private String restRouteWherePart1 = "where=ORGANIZATIONACRONYM+%3D+%27DPW%27+AND+SERVICEORDERSTATUS%3D+%27OPEN%27";  //+ selRt +  
-    private String restRouteWherePart2 = "&text=&objectIds=6932&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson";
+    private String restRouteWherePart1 = "where=ORGANIZATIONACRONYM+%3D+%27DPW%27+AND+SERVICEORDERSTATUS%3D+%27OPEN%27+AND+rownum%3C10+AND+SERVICECODEDESCRIPTION%3D+%27";//Street Cleaning%27";  //+ selRt +  
+    private String restRouteWherePart2 = "%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson";
     Spinner spinner;
     int m_SelectPosition;
     String crNumStr;
@@ -119,29 +119,32 @@ public class MainActivity extends Activity {
     private String mResult = null;
   //dl 09/19/2014 comment the following function as we don't network signal
     //private int mSignalDbm;
-    private static HashMap<Integer,String> mResultMap;
+    private static HashMap<String,String> mResultMap;
     //dl 12-14-2014
-    private static HashMap<Integer,Boolean> mLoadStatusMap;
+    private static HashMap<String,Boolean> mLoadStatusMap;
     //This flag is used to know whether the routing information is in Memory or not.
     private static boolean mRoutesInMemory = false;
     private static HashMap<String,Boolean> mRouteStatusMap;
+    
+    private static String[] mTypeArray;
 
     private BulkMobileDB mdb;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		//StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-	    //StrictMode.setThreadPolicy(policy);
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+	    StrictMode.setThreadPolicy(policy);
 		
 		setContentView(R.layout.selectroute);	
 		//setContentView(R.layout.activity_main);	
 		//setContentView(R.layout.takephoto);	
+		mTypeArray = getResources().getStringArray(R.array.SRTypes);
 		
 		spinner = (Spinner) findViewById(R.id.routes);
 		// Create an ArrayAdapter using the string array and a default spinner layout
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-		        R.array.collRt_array, android.R.layout.simple_spinner_item);
+		        R.array.SRTypes, android.R.layout.simple_spinner_item);
 		// Specify the layout to use when the list of choices appears
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		// Apply the adapter to the spinner
@@ -597,7 +600,7 @@ public class MainActivity extends Activity {
 		startActivity(nextScreen);		 
 	}
 	
-	public String queryRESTurlInMemory(Integer iIndex) {
+	public String queryRESTurlInMemory(String iIndex) {
 		String lResult;
 		lResult = mResultMap.get(iIndex);
 		
@@ -671,8 +674,8 @@ public class MainActivity extends Activity {
 			//If the routes data are in memory, query them from memory;
 			//Otherwise, call the REST service to get the data;
 			//dl 12-14-2014 Add more accurate control over the 
-			if (mRoutesInMemory == true && mLoadStatusMap.get(Integer.parseInt(val.toString())) == true ) {
-				result = queryRESTurlInMemory(Integer.parseInt(val.toString()));
+			if (mRoutesInMemory == true && mLoadStatusMap.get(val.toString()) == true ) {
+				result = queryRESTurlInMemory(val.toString());
 			}
 			else {
 				try {
@@ -696,7 +699,15 @@ public class MainActivity extends Activity {
 				for(int i = 0; i < features.length(); i++){
 			        JSONObject c = features.getJSONObject(i);
 			        JSONObject b = c.getJSONObject("attributes");
-			        dataMap.put(Integer.parseInt(b.getString("OBJECTID")), b.getString("SERVICEREQUESTID") + '_' + b.getString("SERVICECODEDESCRIPTION") + '_' + b.getString("STREETADDRESS")+ "_" + b.getString("ZIPCODE"));
+			        dataMap.put(Integer.parseInt(b.getString("OBJECTID")), 
+			        		b.getString("SERVICEREQUESTID") + '_' 
+			        		+ b.getString("SERVICECODEDESCRIPTION") + '_' 
+			        		+ b.getString("STREETADDRESS")+ "_" 
+			        		+ b.getString("ZIPCODE") + "_"
+			        		+ b.getString("STATUS_CODE") + "_"
+			        		+ b.getString("WARD") + "_"
+			        		+ b.getString("SERVICEDUEDATE")
+			        		);
 				}
 				
 			}catch (JSONException e) {
@@ -712,6 +723,9 @@ public class MainActivity extends Activity {
 	    TableRow newRow;
 	    TextView cellText1;
 	    TextView cellText2;
+	    TextView cellText3;
+	    TextView cellText4;
+	    TextView cellText5;
 	    TextView cellNum;
 	    Boolean searchResult;
 	    
@@ -728,6 +742,19 @@ public class MainActivity extends Activity {
 	    TextView addHeaderTxt = new TextView(this);
 	    addHeaderTxt.setText("Address");
 	    rowHeader.addView(addHeaderTxt);
+	    
+	    TextView statusHeaderTxt = new TextView(this);
+	    statusHeaderTxt.setText("Status");
+	    rowHeader.addView(statusHeaderTxt);
+	    
+	    TextView wardHeaderTxt = new TextView(this);
+	    wardHeaderTxt.setText("Ward");
+	    rowHeader.addView(wardHeaderTxt);
+	    
+	    TextView dueHeaderTxt = new TextView(this);
+	    dueHeaderTxt.setText("Due");
+	    rowHeader.addView(dueHeaderTxt);
+	    
 	    table.addView(rowHeader);
 
 	    //Sort these two maps
@@ -754,7 +781,7 @@ public class MainActivity extends Activity {
 	    	cellText1 = new TextView(this);
 	    	cellText1.setGravity(Gravity.CENTER_HORIZONTAL); 
 	    	cellText1.setText(Html.fromHtml( datas[1] ));
-	    	cellText1.setWidth(120);
+	    	cellText1.setWidth(60);
 
 	    	cellText1.setTextColor(Color.BLUE);
 	    	
@@ -792,9 +819,24 @@ public class MainActivity extends Activity {
 	    	newRow.addView(cellText1);
 	    	
 	    	cellText2 = new TextView(this);
-	    	cellText2.setWidth(150);
+	    	cellText2.setWidth(120);
 	    	cellText2.setText(datas[2]+ " ,Washington DC," + datas[3] );
 	    	newRow.addView(cellText2);  
+	    	
+	    	cellText3 = new TextView(this);
+	    	cellText3.setWidth(40);
+	    	cellText3.setText(datas[4] );
+	    	newRow.addView(cellText3);  
+	    	
+	    	cellText4 = new TextView(this);
+	    	cellText4.setWidth(30);
+	    	cellText4.setText(datas[5]);
+	    	newRow.addView(cellText4);  
+	    	
+	    	cellText5 = new TextView(this);
+	    	cellText5.setWidth(60);
+	    	cellText5.setText(datas[6]);
+	    	newRow.addView(cellText5);  
 	    	//CommentsMap.put(datas[0], datas[2]);
 	    	table.addView(newRow); 
 	    }
@@ -1180,23 +1222,26 @@ public class MainActivity extends Activity {
 	    	 //Upload_file_final();
 	    	 //set RoutesInMemory to false;
 	    	 mRoutesInMemory = false;
-	    	 mResultMap = new HashMap<Integer,String>();
-	    	 mLoadStatusMap = new HashMap<Integer,Boolean>();
+	    	 mResultMap = new HashMap<String,String>();
+	    	 mLoadStatusMap = new HashMap<String,Boolean>();
 	    	 //Initialization of RouteStatus;
 	    	 //mRouteStatusMap = new HashMap<String,Boolean>();
-		 	 for (int i = 1; i < 2; i++) 
+	    	 
+	    	 int len = mTypeArray.length;
+		 	 //for (int i = 3; i < len; i++) 
+	    	 for (int i = 3; i < 4; i++) 
 		 	 {
 		 	    	String result;
 		 	    	try {
-		 	    		result = queryRESTurl(restRouteURL + restRouteWherePart1 + restRouteWherePart2 );
+		 	    		result = queryRESTurl(restRouteURL + restRouteWherePart1 + mTypeArray[i].replaceAll(" ", "%20") + restRouteWherePart2 );
 		 	    	} catch (Exception e) {
 		 	    		result = null;
 		 	    		e.printStackTrace();
-		 	    		mResultMap.put(Integer.valueOf(i), result);
-		 	    		mLoadStatusMap.put(Integer.valueOf(i), false);
+		 	    		mResultMap.put(mTypeArray[i], result);
+		 	    		mLoadStatusMap.put(mTypeArray[i], false);
 		 	    	}
-		 	    	mResultMap.put(Integer.valueOf(i), result);
-		 	    	mLoadStatusMap.put(Integer.valueOf(i), true);
+		 	    	mResultMap.put(mTypeArray[i], result);
+		 	    	mLoadStatusMap.put(mTypeArray[i], true);
 		 	 }
 	         return null;
 	     }

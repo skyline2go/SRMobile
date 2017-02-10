@@ -12,7 +12,7 @@
          
         <!--  comment the load all button 07/16/2014
         //2014-12-13 uncomment the following lines
-        -->
+        
         <Button
             android:id="@+id/loadallroute"
             android:layout_width="wrap_content"
@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:onClick="CloseAllTickets"
             android:text="@string/CloseAllTickets" />
+            -->
         <Spinner
             android:id="@+id/routes"
             android:layout_width="match_parent"
