@@ -30,6 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -133,8 +134,8 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-	    StrictMode.setThreadPolicy(policy);
+		//StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+	    //StrictMode.setThreadPolicy(policy);
 		
 		setContentView(R.layout.selectroute);	
 		//setContentView(R.layout.activity_main);	
@@ -616,7 +617,7 @@ public class MainActivity extends Activity {
 	public void loadAllRoute(View view){
         // If routes are not in memory, load them
 		if  (mRoutesInMemory == false || ! allLoadSuccess() ) {
-			mLoadAllRouteDialog = ProgressDialog.show(MainActivity.this, "", "Loading Routes. Please wait...", true);
+			mLoadAllRouteDialog = ProgressDialog.show(MainActivity.this, "", "Loading Requests. Please wait...", true);
 			
 			LoadAllRouteTask task = new LoadAllRouteTask();
 			task.execute();
@@ -834,8 +835,15 @@ public class MainActivity extends Activity {
 	    	newRow.addView(cellText4);  
 	    	
 	    	cellText5 = new TextView(this);
+	    	
+	    	Calendar duedate = Calendar.getInstance();
+	    	duedate.setTimeInMillis(Long.parseLong(datas[6]));
+	    	SimpleDateFormat format = 
+	                new SimpleDateFormat("MM/dd/yyyy");
+	    	String finalDue = format.format(duedate.getTime());
+	    	
 	    	cellText5.setWidth(60);
-	    	cellText5.setText(datas[6]);
+	    	cellText5.setText(finalDue);
 	    	newRow.addView(cellText5);  
 	    	//CommentsMap.put(datas[0], datas[2]);
 	    	table.addView(newRow); 
@@ -1229,7 +1237,7 @@ public class MainActivity extends Activity {
 	    	 
 	    	 int len = mTypeArray.length;
 		 	 //for (int i = 3; i < len; i++) 
-	    	 for (int i = 3; i < 4; i++) 
+	    	 for (int i = 0; i < len; i++) 
 		 	 {
 		 	    	String result;
 		 	    	try {
