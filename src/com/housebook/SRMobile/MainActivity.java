@@ -107,9 +107,10 @@ public class MainActivity extends Activity {
     private String restRouteWherePart2 = "%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson";
     Spinner spinner;
     int m_SelectPosition;
-    String crNumStr;
-    Map<String, String> CommentsMap;
-    String commentStr;
+    //String crNumStr;
+    String srNumStr;
+    Map<String, String> DetailsMap;
+    String detailStr;
     
     ///private static String URL = "http://leaf.dpw.dc.gov/CloseSR.asmx";
     private static String URL = "http://trackster.dpw.dc.gov/CloseSR.asmx";
@@ -326,61 +327,6 @@ public class MainActivity extends Activity {
 		return list.size() > 0;
 	}
 	
-	/*public void Write_file_to_Output(DataOutputStream iOutputStream, int iIndex) {
-		String lineEnd = "\r\n";
-		String twoHyphens = "--";
-		String boundary =  "BbC04y";
-		
-		int bytesRead, bytesAvailable, bufferSize;
-		byte[] buffer;
-		int maxBufferSize = 2*1024*1024;
-		String lTemp = null;
-		InputStream fileInputStream = null;
-	
-		try {
-		SinglePicArrayData lSinglePicArray = SinglePicArrayData.getInstance();
-		PictureProperty lPicProp = (PictureProperty)lSinglePicArray.mPictureProp.get(iIndex);
-		fileInputStream = new FileInputStream(lPicProp.getFilePath());
-		//fileInputStream = new FileInputStream("./ic_launcher.png");
-		
-		lTemp = twoHyphens + boundary + lineEnd;
-		iOutputStream.writeBytes(lTemp);
-		lTemp = "Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + lSinglePicArray.mSRNo + "_" + (iIndex + 1) +"\"" + lineEnd;
-		iOutputStream.writeBytes(lTemp);
-		//The following two lines are important
-		lTemp = lineEnd;
-		iOutputStream.write(lTemp.getBytes());
-		//lTemp = "Content-Type: image/png" + lineEnd;
-		//lTemp = "Content-Type: text/plain" + lineEnd;
-		//outputStream.writeBytes(lTemp);
-		//lTemp = "Content-Transfer-Encoding: binary";
-		//outputStream.writeBytes(lTemp);
-
-		bytesAvailable = fileInputStream.available();
-		bufferSize = Math.min(bytesAvailable, maxBufferSize);
-		buffer = new byte[bufferSize];
-
-		// Read file
-		bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-		while (bytesRead > 0)
-		{
-			iOutputStream.write(buffer, 0, bufferSize);
-			bytesAvailable = fileInputStream.available();
-			bufferSize = Math.min(bytesAvailable, maxBufferSize);
-			bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-		}
-
-		lTemp = lineEnd;
-		iOutputStream.writeBytes(lTemp);
-		
-		fileInputStream.close();
-		}
-		catch (Exception ex)
-		{
-		//Exception handling
-		}
-		
-	}*/
 	
 	public void Write_file_to_Output_Encode(DataOutputStream iOutputStream, int iIndex) {
 		String lineEnd = "\r\n";
@@ -466,8 +412,7 @@ public class MainActivity extends Activity {
 		catch (Exception ex)
 		{
 		//Exception handling
-		}
-		
+		}		
 	}
 	
 	public void Upload_file_final() {
@@ -548,9 +493,9 @@ public class MainActivity extends Activity {
 		//Exception handling
 		}
 	}
-
+/*
 	public void gotoCloseout(View view){
-		setContentView(R.layout.closeout);	
+		setContentView(R.layout.srdetail);	
 		Spinner spStatus = (Spinner) findViewById(R.id.spStatus);
 		// Create an ArrayAdapter using the string array and a default spinner layout
 		ArrayAdapter<CharSequence> adapterSP = ArrayAdapter.createFromResource(this,
@@ -588,6 +533,41 @@ public class MainActivity extends Activity {
 		//dl 09/19/2014 comment the following function as we don't network signal
 		//EditText dbmEt = (EditText)findViewById(R.id.txtDbm);
 		//dbmEt.setText(Integer.toString(mSignalDbm));
+	}
+	*/
+	public void gotoDetail(View view){
+		setContentView(R.layout.srdetail);	
+		Spinner spStatus = (Spinner) findViewById(R.id.spStatus);
+		// Create an ArrayAdapter using the string array and a default spinner layout
+		/*ArrayAdapter<CharSequence> adapterSP = ArrayAdapter.createFromResource(this,
+		        R.array.collStatus, android.R.layout.simple_spinner_dropdown_item);
+		// Specify the layout to use when the list of choices appears
+		adapterSP.setDropDownViewResource(android.R.layout.simple_spinner_item);
+		// Apply the adapter to the spinner
+		spStatus.setAdapter(adapterSP);
+		
+		Spinner spNotes = (Spinner) findViewById(R.id.spNotes);
+		// Create an ArrayAdapter using the string array and a default spinner layout
+		ArrayAdapter<CharSequence> notesSP = ArrayAdapter.createFromResource(this,
+		        R.array.collNotes, android.R.layout.simple_spinner_dropdown_item);   //spinnersmallfont);
+		
+		// Specify the layout to use when the list of choices appears
+		notesSP.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		// Apply the adapter to the spinner
+		spNotes.setAdapter(notesSP);*/
+		
+		//set SRNum based on user clicks on prev screen
+		EditText et = (EditText)findViewById(R.id.txtSRNo);
+		et.setText(srNumStr);
+		
+		String[] datas = detailStr.split("_");
+		
+		EditText etSRType = (EditText)findViewById(R.id.txtSRType);
+		etSRType.setText(datas[1]);
+
+		EditText etAddress = (EditText)findViewById(R.id.txtAddress);
+		etAddress.setText(datas[2]+ " ,Washington DC," + datas[3]);
+		
 	}
 
 	public void gotoPhotoPage(View view){
@@ -680,7 +660,7 @@ public class MainActivity extends Activity {
 			}
 			else {
 				try {
-					result = queryRESTurl(restRouteURL + restRouteWherePart1 + val.toString() + restRouteWherePart2 );
+					result = queryRESTurl(restRouteURL + restRouteWherePart1 + val.toString().replaceAll(" ", "%20") + restRouteWherePart2 );
 				} catch (Exception e) {
 					//If error happened, return directly
 					result = null;
@@ -764,7 +744,7 @@ public class MainActivity extends Activity {
 	    Set s = DataTreeMap.entrySet();
 	    Iterator it = s.iterator();
 	    //dl added 05/01/2015
-	    CommentsMap = new HashMap<String, String>();
+	    DetailsMap = new HashMap<String, String>();
 	    while ( it.hasNext() ) {
 	    	Map.Entry entry = (Map.Entry) it.next();
 	        Integer sequence = (Integer) entry.getKey();
@@ -777,14 +757,8 @@ public class MainActivity extends Activity {
 	    	//cellNum.setText(String.valueOf(i+1));
 	    	cellNum.setText(datas[0]);
 	    	cellNum.setWidth(50);
-	    	newRow.addView(cellNum);
 	    	
-	    	cellText1 = new TextView(this);
-	    	cellText1.setGravity(Gravity.CENTER_HORIZONTAL); 
-	    	cellText1.setText(Html.fromHtml( datas[1] ));
-	    	cellText1.setWidth(60);
-
-	    	cellText1.setTextColor(Color.BLUE);
+	    	cellNum.setTextColor(Color.BLUE);
 	    	
 	    	//Search whether the route has been closed or not.
 	    	if (mRouteStatusMap !=null) {
@@ -792,30 +766,37 @@ public class MainActivity extends Activity {
 		    	
 		    	if (searchResult != null) {
 		    		if (searchResult.equals(Boolean.TRUE)){
-		    			cellText1.setTextColor(Color.RED);
+		    			cellNum.setTextColor(Color.RED);
 		    		}
 		    	} else {
 		    		//Check the db whether that ticket is closed or not.
 		    		BulkMobileDB db = new BulkMobileDB(this);
 		    		int lcount = db.checkTicketExist(datas[0]);
 		    		if (lcount == 1) {
-		    			cellText1.setTextColor(Color.RED);
+		    			cellNum.setTextColor(Color.RED);
 		    		}
 		    	}
 	    	}
 	    		
-	    	cellText1.setOnClickListener(new View.OnClickListener() {
+	    	cellNum.setOnClickListener(new View.OnClickListener() {
 	    	    public void onClick(View v) {
 	    	    	TextView tv = (TextView)v;
-	    	    	crNumStr = tv.getText().toString();
+	    	    	srNumStr = tv.getText().toString();
 	    	    	//Save the selected value
 	    	    	m_SelectPosition = spinner.getSelectedItemPosition();
-	    	    	//commentStr = CommentsMap.get(crNumStr);
-	    	    	gotoCloseout(v);
+	    	    	detailStr = DetailsMap.get(srNumStr);
+	    	    	gotoDetail(v);
 	    	    }
 	    	});
 	    	
-	    	cellText1.setMovementMethod(LinkMovementMethod.getInstance());
+	    	cellNum.setMovementMethod(LinkMovementMethod.getInstance());
+	    	
+	    	newRow.addView(cellNum);
+	    	
+	    	cellText1 = new TextView(this);
+	    	cellText1.setGravity(Gravity.CENTER_HORIZONTAL); 
+	    	cellText1.setText(Html.fromHtml( datas[1] ));
+	    	cellText1.setWidth(60);
 
 	    	newRow.addView(cellText1);
 	    	
@@ -845,7 +826,7 @@ public class MainActivity extends Activity {
 	    	cellText5.setWidth(60);
 	    	cellText5.setText(finalDue);
 	    	newRow.addView(cellText5);  
-	    	//CommentsMap.put(datas[0], datas[2]);
+	    	DetailsMap.put(datas[0], data);
 	    	table.addView(newRow); 
 	    }
 	}
@@ -1237,7 +1218,8 @@ public class MainActivity extends Activity {
 	    	 
 	    	 int len = mTypeArray.length;
 		 	 //for (int i = 3; i < len; i++) 
-	    	 for (int i = 0; i < len; i++) 
+	    	 //For now, for performance reason, just select one type
+	    	 for (int i = 3; i < 4; i++) 
 		 	 {
 		 	    	String result;
 		 	    	try {
