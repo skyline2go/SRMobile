@@ -101,9 +101,9 @@ public class MainActivity extends Activity {
 	}*/
 	
     private String restRouteURL = "http://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_APPS/SR_30days_Open/MapServer/0/query?"; 
-    //private String restRouteWherePart1 = "where=Route%3D'";  //+ selRt +  
-    //private String restRouteWherePart2 = "'&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=Route%2C+Address%2C+Comments%2C+Sequence%2CSERVNO&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&f=pjson";
-    private String restRouteWherePart1 = "where=ORGANIZATIONACRONYM+%3D+%27DPW%27+AND+SERVICEORDERSTATUS%3D+%27OPEN%27+AND+rownum%3C10+AND+SERVICECODEDESCRIPTION%3D+%27";//Street Cleaning%27";  //+ selRt +  
+    
+    //private String restRouteWherePart1 = "where=ORGANIZATIONACRONYM+%3D+%27DPW%27+AND+SERVICEORDERSTATUS%3D+%27OPEN%27+AND+rownum%3C10+AND+SERVICECODEDESCRIPTION%3D+%27";//Street Cleaning%27";  //+ selRt + 
+    private String restRouteWherePart1 = "where=ORGANIZATIONACRONYM+%3D+%27DPW%27+AND+SERVICEORDERSTATUS%3D+%27OPEN%27+AND+SERVICECODEDESCRIPTION%3D+%27";//Street Cleaning%27";  //+ selRt +  
     private String restRouteWherePart2 = "%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&f=pjson";
     Spinner spinner;
     int m_SelectPosition;
@@ -747,6 +747,8 @@ public class MainActivity extends Activity {
 	    Iterator it = s.iterator();
 	    //dl added 05/01/2015
 	    DetailsMap = new HashMap<String, String>();
+	    long todayMillSecond = System.currentTimeMillis();
+	    long offset = 7*24*3600*1000;
 	    while ( it.hasNext() ) {
 	    	Map.Entry entry = (Map.Entry) it.next();
 	        Long sequence = (Long) entry.getKey();
@@ -758,7 +760,14 @@ public class MainActivity extends Activity {
 	    	cellText5 = new TextView(this);
 	    	
 	    	Calendar duedate = Calendar.getInstance();
-	    	duedate.setTimeInMillis(Long.parseLong(datas[6]));
+	    	long ticketMillSecond = Long.parseLong(datas[6]);
+	    	
+	    	//Only display tickets which are due within 7 days
+	    	if (ticketMillSecond > todayMillSecond + offset) {
+	    		continue;
+	    	}
+	    	
+	    	duedate.setTimeInMillis(ticketMillSecond);
 	    	SimpleDateFormat format = 
 	                new SimpleDateFormat("MM/dd/yyyy");
 	    	String finalDue = format.format(duedate.getTime());
