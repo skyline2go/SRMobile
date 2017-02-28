@@ -135,8 +135,8 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		//StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-	    //StrictMode.setThreadPolicy(policy);
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+	    StrictMode.setThreadPolicy(policy);
 		
 		setContentView(R.layout.selectroute);	
 		//setContentView(R.layout.activity_main);	
@@ -647,7 +647,7 @@ public class MainActivity extends Activity {
 		//setContentView(R.layout.routeresult);
 
 		Object val = spinner.getSelectedItem();
-		HashMap<Integer,String> dataMap = new HashMap<Integer,String>();
+		HashMap<Long,String> dataMap = new HashMap<Long,String>();
 				
 		if (val != null){
 			//String result = queryRESTurl(restRouteURL + restRouteWherePart1 + val.toString() + restRouteWherePart2 );
@@ -680,7 +680,7 @@ public class MainActivity extends Activity {
 				for(int i = 0; i < features.length(); i++){
 			        JSONObject c = features.getJSONObject(i);
 			        JSONObject b = c.getJSONObject("attributes");
-			        dataMap.put(Integer.parseInt(b.getString("OBJECTID")), 
+			        dataMap.put(Long.parseLong(b.getString("SERVICEDUEDATE")), 
 			        		b.getString("SERVICEREQUESTID") + '_' 
 			        		+ b.getString("SERVICECODEDESCRIPTION") + '_' 
 			        		+ b.getString("STREETADDRESS")+ "_" 
@@ -710,8 +710,14 @@ public class MainActivity extends Activity {
 	    TextView cellNum;
 	    Boolean searchResult;
 	    
+	    
 	    TableRow rowHeader = new TableRow(this);  
 	    rowHeader.setGravity(Gravity.CENTER);  
+	    
+	    TextView dueHeaderTxt = new TextView(this);
+	    dueHeaderTxt.setText("Due");
+	    rowHeader.addView(dueHeaderTxt);
+	    
 	    TextView numHeaderTxt = new TextView(this);  
 	    numHeaderTxt.setText("SR_Number");  
 	    rowHeader.addView(numHeaderTxt);
@@ -732,14 +738,10 @@ public class MainActivity extends Activity {
 	    wardHeaderTxt.setText("Ward");
 	    rowHeader.addView(wardHeaderTxt);
 	    
-	    TextView dueHeaderTxt = new TextView(this);
-	    dueHeaderTxt.setText("Due");
-	    rowHeader.addView(dueHeaderTxt);
-	    
 	    table.addView(rowHeader);
 
 	    //Sort these two maps
-	    Map<Integer, String> DataTreeMap = new TreeMap<Integer, String>(dataMap);
+	    Map<Long, String> DataTreeMap = new TreeMap<Long, String>(dataMap);
 	    
 	    Set s = DataTreeMap.entrySet();
 	    Iterator it = s.iterator();
@@ -747,11 +749,24 @@ public class MainActivity extends Activity {
 	    DetailsMap = new HashMap<String, String>();
 	    while ( it.hasNext() ) {
 	    	Map.Entry entry = (Map.Entry) it.next();
-	        Integer sequence = (Integer) entry.getKey();
+	        Long sequence = (Long) entry.getKey();
 	        String data = (String) entry.getValue();
 	    	
 	        String[] datas = data.split("_");
 	    	newRow = new TableRow(this); 
+	    	
+	    	cellText5 = new TextView(this);
+	    	
+	    	Calendar duedate = Calendar.getInstance();
+	    	duedate.setTimeInMillis(Long.parseLong(datas[6]));
+	    	SimpleDateFormat format = 
+	                new SimpleDateFormat("MM/dd/yyyy");
+	    	String finalDue = format.format(duedate.getTime());
+	    	
+	    	cellText5.setWidth(60);
+	    	cellText5.setText(finalDue);
+	    	newRow.addView(cellText5);
+	    	
 	    	cellNum = new TextView(this);
 	    	cellNum.setGravity(Gravity.CENTER_HORIZONTAL); 
 	    	//cellNum.setText(String.valueOf(i+1));
@@ -815,17 +830,7 @@ public class MainActivity extends Activity {
 	    	cellText4.setText(datas[5]);
 	    	newRow.addView(cellText4);  
 	    	
-	    	cellText5 = new TextView(this);
-	    	
-	    	Calendar duedate = Calendar.getInstance();
-	    	duedate.setTimeInMillis(Long.parseLong(datas[6]));
-	    	SimpleDateFormat format = 
-	                new SimpleDateFormat("MM/dd/yyyy");
-	    	String finalDue = format.format(duedate.getTime());
-	    	
-	    	cellText5.setWidth(60);
-	    	cellText5.setText(finalDue);
-	    	newRow.addView(cellText5);  
+	    	  
 	    	DetailsMap.put(datas[0], data);
 	    	table.addView(newRow); 
 	    }
@@ -1216,10 +1221,12 @@ public class MainActivity extends Activity {
 	    	 //Initialization of RouteStatus;
 	    	 //mRouteStatusMap = new HashMap<String,Boolean>();
 	    	 
+	    	 
 	    	 int len = mTypeArray.length;
 		 	 //for (int i = 3; i < len; i++) 
 	    	 //For now, for performance reason, just select one type
-	    	 for (int i = 3; i < 4; i++) 
+	    	 //for (int i = 3; i < 4; i++) 
+	    	 for (int i = 0; i < len; i++) 
 		 	 {
 		 	    	String result;
 		 	    	try {
@@ -1979,7 +1986,7 @@ public class MainActivity extends Activity {
 		spinner = (Spinner) findViewById(R.id.routes);
 		// Create an ArrayAdapter using the string array and a default spinner layout
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-		        R.array.collRt_array, android.R.layout.simple_spinner_item);
+				R.array.SRTypes, android.R.layout.simple_spinner_item);
 		// Specify the layout to use when the list of choices appears
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		// Apply the adapter to the spinner
