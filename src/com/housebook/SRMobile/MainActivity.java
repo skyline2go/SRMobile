@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.security.KeyStore;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,14 +43,30 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
 
+import javax.net.ssl.HostnameVerifier;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.SingleClientConnManager;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -271,6 +288,89 @@ public class MainActivity extends Activity {
 		try{
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpUriRequest hRequest = new HttpGet(url);
+		    HttpResponse response = httpclient.execute(hRequest);
+		    StatusLine statusLine = response.getStatusLine();
+		    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+		        ByteArrayOutputStream out = new ByteArrayOutputStream();
+		        response.getEntity().writeTo(out);
+		        responseString = out.toString();
+		        out.close();
+		        
+		        //..more logic
+		    } else{
+		        //Closes the connection.
+		        response.getEntity().getContent().close();
+		        throw new IOException(statusLine.getReasonPhrase());
+		    }
+		}catch (ClientProtocolException e) {
+            // TODO Auto-generated catch block
+            //e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            //e.printStackTrace();
+            throw e;
+        }
+		return responseString;
+	}
+	
+	/*public static HttpClient createHttpClient()
+	{
+	    HttpParams params = new BasicHttpParams();
+	    HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+	    HttpProtocolParams.setContentCharset(params, HTTP.DEFAULT_CONTENT_CHARSET);
+	    HttpProtocolParams.setUseExpectContinue(params, true);
+
+	    SchemeRegistry schReg = new SchemeRegistry();
+	    schReg.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+	    schReg.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+	    ClientConnectionManager conMgr = new ThreadSafeClientConnManager(params, schReg);
+
+	    return new DefaultHttpClient(conMgr, params);
+	}*/
+	
+	public HttpClient getNewHttpClient() {
+	    try {
+	        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+	        trustStore.load(null, null);
+
+	        CustomSSLSocketFactory sf = new CustomSSLSocketFactory(trustStore);
+	        sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+
+	        HttpParams params = new BasicHttpParams();
+	        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+	        HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
+
+	        SchemeRegistry registry = new SchemeRegistry();
+	        registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+	        registry.register(new Scheme("https", sf, 443));
+
+	        ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, registry);
+
+	        return new DefaultHttpClient(ccm, params);
+	    } catch (Exception e) {
+	        return new DefaultHttpClient();
+	    }
+	}
+	
+public String putRESTurl(String url) throws Exception {
+		
+		String responseString = null;		
+	    
+		try{
+			/*HttpClient client = new DefaultHttpClient();
+			HostnameVerifier hostnameVerifier = org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+			SchemeRegistry registry = new SchemeRegistry();
+			SSLSocketFactory socketFactory = SSLSocketFactory.getSocketFactory();
+			socketFactory.setHostnameVerifier((X509HostnameVerifier) hostnameVerifier);
+			registry.register(new Scheme("https", socketFactory, 443));
+			SingleClientConnManager mgr = new SingleClientConnManager(client.getParams(), registry);
+			DefaultHttpClient httpClient = new DefaultHttpClient(mgr, client.getParams());
+			*/
+			
+			HttpClient httpclient = getNewHttpClient();
+			 
+			HttpUriRequest hRequest = new HttpPut(url);
 		    HttpResponse response = httpclient.execute(hRequest);
 		    StatusLine statusLine = response.getStatusLine();
 		    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
@@ -1183,6 +1283,20 @@ public class MainActivity extends Activity {
 	    alertDialog.show();
 	}
 	
+	public void showClosingMessage() {
+		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+	    alertDialog.setTitle("CloseTicket Result");
+	    alertDialog.setMessage(mResult);
+	    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+	       public void onClick(DialogInterface dialog, int which) {
+	          // TODO Add your code for the button here.
+	       }
+	    });
+	    // Set the Icon for the Dialog
+	    //alertDialog.setIcon(R.drawable.icon);
+	    alertDialog.show();
+	}
+	
 	public void showCloseLaterMessage() {
 		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 	    alertDialog.setTitle("INFO");
@@ -1232,10 +1346,10 @@ public class MainActivity extends Activity {
 	    	 
 	    	 
 	    	 int len = mTypeArray.length;
-		 	 //for (int i = 3; i < len; i++) 
+		 	 for (int i = 3; i < len; i++) 
 	    	 //For now, for performance reason, just select one type
 	    	 //for (int i = 3; i < 4; i++) 
-	    	 for (int i = 0; i < len; i++) 
+	    	 //for (int i = 0; i < len; i++) 
 		 	 {
 		 	    	String result;
 		 	    	try {
@@ -1309,6 +1423,49 @@ public class MainActivity extends Activity {
 		}
 		return lResult;
 	}
+	
+	public void Close_SR(View v)
+    {
+		//mDialog = ProgressDialog.show(MainActivity.this, "", "Closing. Please wait...", true);
+		CloseSRTask closeTask = new CloseSRTask();
+		closeTask.execute();
+    }
+	
+	//dl 09-06-2014 comment the following task.
+	private class CloseSRTask extends AsyncTask<Void, Void, Void> {
+		     protected Void doInBackground(Void... args) {
+		         
+		    	 String result;
+		 		//String url = "https://open311api-qa.herokuapp.com/v2/requests.json?api_key=66a49cdd8b0348ba9931c9105ea0fbc4&service_request_id=17-00017410"+
+		 		//		"&tasks%3D%5B%7B%22task_code%22%3A%22CLEAALLE%22%2C%22task_short_name%22%3A%22Clean%20Alley%22%2C%22citizen_email_on_complete%22%3A%22true%22%2C%22internal_comments%22%3A%22The%20Internal%20Comments%22%2C%22external_comments%22%3A%22Alley%20Cleaned%22%2C%22outcome%22%3A%22Close%20SR%22%2C%22order%22%3A%221%22%2C%22completion_date%22%3A%222017-04-24T14%3A03%3A00Z%22%2C%22status%22%3A%22completed%22%2C%22responsible_party%22%3A%22DPW%22%7D%5D";
+		    	 String url = "https://open311api-qa.herokuapp.com/v2/requests.json?api_key=66a49cdd8b0348ba9931c9105ea0fbc4&service_request_id=17-00017431"+
+		    	 //"&tasks=[{%22task_code%22:%22CLEAALLE%22,%22task_short_name%22:%22Clean%20Alley%22,%22citizen_email_on_complete%22:%22true%22,%22internal_comments%22:%22The%20Internal%20Comments%22,%22external_comments%22:%22Alley%20Cleaned%22,%22outcome%22:%22Close%20SR%22,%22order%22:%221%22,%22completion_date%22:%222017-04-23T14:03:00Z%22,%22status%22:%22completed%22,%22responsible_party%22:%22DPW%22}]";
+		    	 "&tasks=%5B%7B%22task_code%22%3A%22CLEAALLE%22%2C%22task_short_name%22%3A%22Clean%20Alley%22%2C%22citizen_email_on_complete%22%3A%22true%22%2C%22internal_comments%22%3A%22The%20Internal%20Comments%22%2C%22external_comments%22%3A%22Alley%20Cleaned%22%2C%22outcome%22%3A%22Close%20SR%22%2C%22order%22%3A%221%22%2C%22completion_date%22%3A%222017-04-28T14%3A03%3A00Z%22%2C%22status%22%3A%22Completed%22%2C%22responsible_party%22%3A%22DPW%22%7D%5D";
+		    	 //url = url.replaceAll(" ", "%20");
+		 		try {
+		 			result = putRESTurl(url);
+		 		} catch (Exception e) {
+		 			//If error happened, return directly
+		 			result = null;
+		 			e.printStackTrace();
+		 			return null;
+		 		}
+		    	 
+		 		 if (result!=null) {
+		 			 mResult = getResultString(result);
+		 		 } else {
+		 			 mResult = "";
+		 		 }
+		 		
+		         return null;
+		     }
+
+		     protected void onPostExecute(Void results) {
+		    	 if (mResult.length() > 0)
+		        	 showClosingMessage();	
+		         mResult ="";
+		     }
+		 }
 	
 	public void Close_Ticket(View v)
     {	
@@ -1980,6 +2137,25 @@ public class MainActivity extends Activity {
 	public void HandleTimeout() {
 		RouteData lRoute = Save_Data();
 		
+	}
+	
+	public String getResultString(String result) {
+		String retResult = "";
+		try{
+			JSONObject rstJSON = new JSONObject(result);
+			retResult = rstJSON.getString("service_request_id") + " is " + rstJSON.getString("status");
+			
+			/*JSONArray jsonArr = new JSONArray(result);
+			//Get the first element (only one)
+			for (int i = 0; i < 1; i++)
+	        {
+	            JSONObject jsonObj = jsonArr.getJSONObject(i);
+	        }*/
+			
+		} catch (JSONException e) {
+	        System.out.print("Error parsing JSON data " + e.toString());
+	    }
+		return retResult;
 	}
 	
 	public void ReturnToRouteResult(View v)
